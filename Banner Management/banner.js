@@ -846,6 +846,6 @@ function performLogout() {
 
   // Simulate logout delay (replace with actual auth logout in production)
   setTimeout(() => {
-    window.location.href = "../Auth/login.html"; // ← CHANGE TO YOUR REAL LOGIN PAGE
+    window.location.href = "../index.html"; // ← CHANGE TO YOUR REAL LOGIN PAGE
   }, 1200);
 }

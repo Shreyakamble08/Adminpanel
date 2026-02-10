@@ -14,22 +14,72 @@
     <!-- Career CSS -->
     <link rel="stylesheet" href="career.css">
     <style>
-        /* Custom scrollbar for sidebar */
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
+        /* Toast styles for logout */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            animation: slideIn 0.4s ease;
         }
 
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: #1a1030;
+        .toast.success {
+            border-left: 4px solid #22c55e;
         }
 
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: #412B6B;
-            border-radius: 2px;
+        .toast.error {
+            border-left: 4px solid #ef4444;
         }
 
-        .sidebar-nav::-webkit-scrollbar-thumb:hover {
-            background: #5a3b8a;
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .toast-icon {
+            font-size: 18px;
+        }
+
+        .toast-success .toast-icon {
+            color: #22c55e;
+        }
+
+        .toast-error .toast-icon {
+            color: #ef4444;
+        }
+
+        .toast-info .toast-icon {
+            color: #3b82f6;
+        }
+
+        .toast-warning .toast-icon {
+            color: #f59e0b;
+        }
+
+        .toast-message {
+            margin: 0;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -39,16 +89,12 @@
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <aside class="sidebar">
-               <!-- Logo -->
+            <!-- Logo -->
             <div class="sidebar-logo">
                 <img src="../logo.png" alt="KunashMedia Logo" class="sidebar-logo-img">
             </div>
             <!-- Navigation -->
             <nav class="sidebar-nav">
-                <!-- <a href="../index.html" class="sidebar-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a> -->
                 <a href="../Banner Management/banner.html" class="sidebar-item">
                     <i class="fas fa-images"></i>
                     <span>Banner Management</span>
@@ -62,23 +108,15 @@
                     <span>Projects</span>
                 </a>
                 <a href="../Contact Management/contact.html" class="sidebar-item">
-                 <i class="fas fa-envelope"></i>
+                    <i class="fas fa-envelope"></i>
                     <span>Contact Management</span>
                 </a>
-                <!-- <a href="#" class="sidebar-item">
-                    <i class="fas fa-users"></i>
-                    <span>Users</span>
-                </a>
-                <a href="#" class="sidebar-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a> -->
 
-<!-- Divider after Contact Management -->
+                <!-- Divider after Contact Management -->
                 <div class="sidebar-divider"></div>
 
                 <!-- Logout -->
-                <a href="#" class="sidebar-item logout-item" onclick="showLogoutConfirm()">
+                <a href="javascript:void(0)" class="sidebar-item logout-item" onclick="showLogoutConfirm()">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -91,9 +129,8 @@
                 </div>
             </nav>
         </aside>
-        
 
-         <!-- Logout Confirmation Modal-->
+        <!-- Logout Confirmation Modal -->
         <div class="modal-overlay" id="logoutModal">
             <div class="modal">
                 <div class="modal-content">
@@ -113,6 +150,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Header -->
@@ -141,6 +179,7 @@
             </div>
         </main>
     </div>
+
     <!-- Delete Modal -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal">
@@ -161,10 +200,87 @@
             </div>
         </div>
     </div>
+
     <!-- Toast Container -->
     <div id="toastContainer"></div>
+
     <!-- Career JS -->
-    <script src="../Career Management/career.js"></script>
+    <script src="career.js"></script>
+
+    <!-- Logout JS -->
+    <script>
+        // Logout functionality
+        function showLogoutConfirm() {
+            document.getElementById("logoutModal").classList.add("show");
+        }
+
+        function closeLogoutModal() {
+            document.getElementById("logoutModal").classList.remove("show");
+        }
+
+        function performLogout() {
+            // Show logout toast message
+            showToast("Logging out...", "info");
+
+            // Close the modal
+            closeLogoutModal();
+
+            // Wait for toast to show, then redirect to login
+            setTimeout(() => {
+                // Clear any session data (if needed)
+                // localStorage.removeItem('admin_token');
+                // sessionStorage.clear();
+
+                // Redirect to login page
+                window.location.href = "../index.html";
+            }, 1200);
+        }
+
+        // Toast notification function
+        function showToast(message, type = "info") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === "success" ? "fa-check-circle text-green-400" :
+                    type === "error" ? "fa-circle-exclamation text-red-400" :
+                        type === "warning" ? "fa-exclamation-triangle text-yellow-400" :
+                            "fa-info-circle text-blue-400"}"></i>
+                <span>${message}</span>
+            `;
+
+            const toastContainer = document.getElementById("toastContainer");
+            if (!toastContainer) {
+                const container = document.createElement("div");
+                container.id = "toastContainer";
+                container.style.position = "fixed";
+                container.style.top = "24px";
+                container.style.right = "24px";
+                container.style.zIndex = "9999";
+                document.body.appendChild(container);
+            }
+
+            document.getElementById("toastContainer").appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function () {
+            const logoutModal = document.getElementById('logoutModal');
+
+            logoutModal.addEventListener('click', function (e) {
+                if (e.target === logoutModal) {
+                    closeLogoutModal();
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && logoutModal.classList.contains('show')) {
+                    closeLogoutModal();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
