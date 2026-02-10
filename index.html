@@ -1,51 +1,652 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Panel</title>
+    <title>Admin Portal - Login & Register</title>
 
-    <!-- Tailwind CDN (you can remove if not needed) -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg-dark: #0f081f;
+            --accent-gradient: linear-gradient(90deg, #ff6b6b, #ff8e53);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: #e0e0ff;
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .glass {
+            background: rgba(74, 44, 122, 0.18);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.9) !important;
+            color: #000 !important;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .glass-input::placeholder {
+            color: #6b7280;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.25);
+        }
+
+        /* Chrome autofill FIX */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #000 !important;
+            -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .btn-gradient {
+            background: var(--accent-gradient);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #111827;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            z-index: 9999;
+            animation: slideIn 0.4s ease;
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Form transitions */
+        .form-container {
+            transition: all 0.3s ease;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .form-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(100%);
+        }
+
+        .form-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Toggle switch */
+        .toggle-switch {
+            display: flex;
+            background: rgba(74, 44, 122, 0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+
+        /* Fixed height container */
+        .fixed-height-container {
+            height: 520px;
+            max-height: 85vh;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Main grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            height: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Left panel */
+        .left-panel {
+            padding: 2rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .left-panel {
+                display: flex;
+            }
+        }
+
+        /* Right panel */
+        .right-panel {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Forms wrapper */
+        .forms-wrapper {
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Forms scroll container - FIXED */
+        .forms-scroll-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+            /* Important for flex child scrolling */
+        }
+
+        /* Individual form scroll area */
+        .form-scroll-area {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+        }
+
+        /* Login form specific - minimal scroll */
+        #login-scroll-area {
+            overflow-y: auto;
+        }
+
+        /* Register form specific - scroll as needed */
+        #register-scroll-area {
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar */
+        .form-scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .form-scroll-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        .form-scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.5);
+            border-radius: 10px;
+        }
+
+        .form-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 107, 0.7);
+        }
+
+        /* Firefox scrollbar */
+        .form-scroll-area {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(250, 236, 236, 0.5) rgba(255, 255, 255, 0.05);
+        }
+
+        /* Form content */
+        .form-content {
+            width: 100%;
+            padding-bottom: 1rem;
+        }
+
+        /* Form spacing */
+        .form-space {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
+<body>
 
-    <!-- Navbar -->
-    <nav class="bg-black text-white p-4">
-        <h1 class="text-xl font-semibold">Admin Dashboard</h1>
-    </nav>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
-    <!-- Main Content -->
-    <main class="p-8">
-        <div class="bg-white shadow-lg rounded-2xl p-8 text-center">
-            <h2 class="text-2xl font-semibold mb-4">Project Deployed Successfully 🎉</h2>
-            <p class="text-gray-600">
-                Your project is live. You can now connect your modules here.
-            </p>
+    <!-- Main Container -->
+    <div class="fixed-height-container glass rounded-3xl overflow-hidden">
+        <div class="main-grid h-full">
+
+            <!-- LEFT PANEL -->
+            <div class="left-panel">
+                <img src="../logo.png" class="w-32 mb-5" alt="Logo" />
+                <h1 id="main-title" class="text-4xl font-bold mb-3">
+                    Welcome<span class="text-[#ff6b6b]">!</span>
+                </h1>
+                <div class="w-14 h-1 bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] rounded-full mb-4"></div>
+                <p id="main-description" class="text-gray-300 max-w-md">
+                    Access your dashboard, manage projects, track progress, and stay in control — all in one powerful
+                    place.
+                </p>
+                <div class="flex gap-4 opacity-40 mt-6">
+                    <div
+                        class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/30 to-pink-600/20 backdrop-blur-sm">
+                    </div>
+                    <div
+                        class="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-600/20 to-purple-600/30 backdrop-blur-sm mt-6">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel">
+                <div class="forms-wrapper">
+
+                    <!-- Toggle Switch -->
+                    <div class="toggle-switch">
+                        <div id="login-toggle" class="toggle-btn active" onclick="switchToLogin()">Sign In</div>
+                        <div id="register-toggle" class="toggle-btn" onclick="switchToRegister()">Create Account</div>
+                    </div>
+
+                    <!-- Forms Container -->
+                    <div class="forms-scroll-container">
+
+                        <!-- Login Form -->
+                        <div id="login-container" class="form-container form-visible">
+                            <div id="login-scroll-area" class="form-scroll-area">
+                                <div class="form-content">
+                                    <h2 class="text-3xl font-bold text-white mb-1">Sign in</h2>
+                                    <p class="text-gray-400 mb-6">Enter your credentials to continue</p>
+
+                                    <form id="loginForm" class="form-space">
+                                        <!-- Email -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Email</label>
+                                            <input id="login-email" type="email" placeholder="admin@example.com"
+                                                class="w-full px-4 py-3 glass-input" />
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Password</label>
+                                            <div class="relative">
+                                                <input id="login-password" type="password" placeholder="••••••••"
+                                                    class="w-full px-4 py-3 pr-12 glass-input" />
+                                                <button type="button"
+                                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                                    onclick="togglePassword('login-password', this)">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Submit -->
+                                        <button type="submit"
+                                            class="w-full py-3 rounded-xl btn-gradient text-white font-semibold mt-2">
+                                            Sign In
+                                        </button>
+
+                                        <div class="text-center text-sm text-gray-400 mt-4">
+                                            <a href="#" class="text-[#ff8e53] hover:underline">Forgot password?</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div id="register-container" class="form-container form-hidden">
+                            <div id="register-scroll-area" class="form-scroll-area">
+                                <div class="form-content">
+                                    <h2 class="text-3xl font-bold text-white mb-1">Create Account</h2>
+                                    <p class="text-gray-400 mb-6">Fill in your details to continue</p>
+
+                                    <form id="registerForm" class="form-space">
+                                        <!-- Full Name -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Full Name</label>
+                                            <input id="register-name" type="text" placeholder="John Doe"
+                                                class="w-full px-4 py-3 glass-input" />
+                                        </div>
+
+                                        <!-- Email -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Email</label>
+                                            <input id="register-email" type="email" placeholder="john@example.com"
+                                                class="w-full px-4 py-3 glass-input" />
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Password</label>
+                                            <div class="relative">
+                                                <input id="register-password" type="password" placeholder="••••••••"
+                                                    class="w-full px-4 py-3 pr-12 glass-input" />
+                                                <button type="button"
+                                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                                    onclick="togglePassword('register-password', this)">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Confirm Password -->
+                                        <div>
+                                            <label class="text-sm text-gray-300 mb-1 block">Confirm Password</label>
+                                            <div class="relative">
+                                                <input id="register-confirm-password" type="password"
+                                                    placeholder="••••••••" class="w-full px-4 py-3 pr-12 glass-input" />
+                                                <button type="button"
+                                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500"
+                                                    onclick="togglePassword('register-confirm-password', this)">
+                                                    <i class="fas fa-eye-slash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Submit -->
+                                        <button type="submit"
+                                            class="w-full py-3 rounded-xl btn-gradient text-white font-semibold mt-2">
+                                            Create Account
+                                        </button>
+
+                                        <div class="text-center text-sm text-gray-400 mt-4">
+                                            <p>Already have an account? <a href="javascript:void(0)"
+                                                    onclick="switchToLogin()"
+                                                    class="text-[#ff8e53] hover:underline">Sign in</a></p>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Module Links Example -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+    <!-- JavaScript -->
+    <script>
+        // Toggle between login and register forms
+        function switchToLogin() {
+            const loginContainer = document.getElementById('login-container');
+            const registerContainer = document.getElementById('register-container');
 
-            <a href="/Auth" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-lg">Auth Module</h3>
-            </a>
+            // Reset scroll position for both forms
+            document.getElementById('login-scroll-area').scrollTop = 0;
+            document.getElementById('register-scroll-area').scrollTop = 0;
 
-            <a href="/Banner-Management" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-lg">Banner Management</h3>
-            </a>
+            // Show login, hide register
+            loginContainer.classList.remove('form-hidden');
+            loginContainer.classList.add('form-visible');
+            registerContainer.classList.remove('form-visible');
+            registerContainer.classList.add('form-hidden');
 
-            <a href="/Career-Management" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-lg">Career Management</h3>
-            </a>
+            // Update toggle buttons
+            document.getElementById('login-toggle').classList.add('active');
+            document.getElementById('register-toggle').classList.remove('active');
 
-            <a href="/Contact-Management" class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="font-semibold text-lg">Contact Management</h3>
-            </a>
+            // Update left panel content
+            document.getElementById('main-title').innerHTML = 'Welcome<span class="text-[#ff6b6b]">!</span>';
+            document.getElementById('main-description').textContent = 'Access your dashboard, manage projects, track progress, and stay in control — all in one powerful place.';
 
-        </div>
-    </main>
+            // Adjust login form scrolling - minimal if content fits
+            adjustLoginFormScroll();
+        }
+
+        function switchToRegister() {
+            const loginContainer = document.getElementById('login-container');
+            const registerContainer = document.getElementById('register-container');
+
+            // Reset scroll position for both forms
+            document.getElementById('login-scroll-area').scrollTop = 0;
+            document.getElementById('register-scroll-area').scrollTop = 0;
+
+            // Show register, hide login
+            registerContainer.classList.remove('form-hidden');
+            registerContainer.classList.add('form-visible');
+            loginContainer.classList.remove('form-visible');
+            loginContainer.classList.add('form-hidden');
+
+            // Update toggle buttons
+            document.getElementById('register-toggle').classList.add('active');
+            document.getElementById('login-toggle').classList.remove('active');
+
+            // Update left panel content
+            document.getElementById('main-title').innerHTML = 'Join Us<span class="text-[#ff6b6b]">.</span>';
+            document.getElementById('main-description').textContent = 'Create your admin account and manage projects, users, and progress from one powerful dashboard.';
+        }
+
+        // Adjust login form scroll behavior
+        function adjustLoginFormScroll() {
+            const loginScrollArea = document.getElementById('login-scroll-area');
+            const loginForm = document.getElementById('loginForm');
+
+            // Calculate if content fits without scrolling
+            const containerHeight = loginScrollArea.clientHeight;
+            const contentHeight = loginForm.scrollHeight + 100; // Add some margin
+
+            if (contentHeight <= containerHeight) {
+                // If content fits, disable scroll
+                loginScrollArea.style.overflowY = 'hidden';
+            } else {
+                // If content doesn't fit, enable scroll
+                loginScrollArea.style.overflowY = 'auto';
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector("i");
+            input.type = input.type === "password" ? "text" : "password";
+            icon.classList.toggle("fa-eye");
+            icon.classList.toggle("fa-eye-slash");
+        }
+
+        // Show toast notification
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === "success" ? "fa-check-circle text-green-400" : "fa-circle-exclamation text-red-400"}"></i>
+                <span>${message}</span>
+            `;
+            document.getElementById("toast-container").appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Login form submission
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value.trim();
+
+            if (!email || !password) {
+                showToast("All fields are required", "error");
+                return;
+            }
+
+            if (!email.includes("@")) {
+                showToast("Enter a valid email address", "error");
+                return;
+            }
+
+            if (password.length < 8) {
+                showToast("Password must be at least 8 characters", "error");
+                return;
+            }
+
+            showToast("Login successful");
+
+            setTimeout(() => {
+                window.location.href = "../Banner Management/banner.html";
+            }, 1200);
+        });
+
+        // Register form submission
+        document.getElementById("registerForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById("register-name").value.trim();
+            const email = document.getElementById("register-email").value.trim();
+            const password = document.getElementById("register-password").value.trim();
+            const confirmPassword = document.getElementById("register-confirm-password").value.trim();
+
+            if (!name || !email || !password || !confirmPassword) {
+                showToast("All fields are required", "error");
+                return;
+            }
+
+            if (!email.includes("@")) {
+                showToast("Enter a valid email address", "error");
+                return;
+            }
+
+            if (password.length < 8) {
+                showToast("Password must be at least 8 characters", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast("Passwords do not match", "error");
+                return;
+            }
+
+            // Simulate registration process
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+
+            btn.textContent = 'Creating Account...';
+            btn.disabled = true;
+
+            showToast("Creating your account...");
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Account Created!';
+                btn.classList.add('bg-green-600');
+
+                showToast("Account created successfully!");
+
+                setTimeout(() => {
+                    // Switch to login form after successful registration
+                    switchToLogin();
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('bg-green-600');
+
+                    // Clear the registration form
+                    document.getElementById("registerForm").reset();
+                }, 1500);
+            }, 1800);
+        });
+
+        // Initialize on load
+        window.addEventListener('load', function () {
+            // Ensure forms are properly sized
+            const formsContainer = document.querySelector('.forms-scroll-container');
+            const loginScrollArea = document.getElementById('login-scroll-area');
+            const registerScrollArea = document.getElementById('register-scroll-area');
+
+            // Set initial heights
+            loginScrollArea.style.height = formsContainer.clientHeight + 'px';
+            registerScrollArea.style.height = formsContainer.clientHeight + 'px';
+
+            // Adjust login form scroll on initial load
+            adjustLoginFormScroll();
+
+            // Add resize listener to adjust heights
+            window.addEventListener('resize', function () {
+                loginScrollArea.style.height = formsContainer.clientHeight + 'px';
+                registerScrollArea.style.height = formsContainer.clientHeight + 'px';
+                adjustLoginFormScroll();
+            });
+        });
+
+        // Fix for mobile devices
+        document.addEventListener('DOMContentLoaded', function () {
+            // Prevent zoom on input focus on mobile
+            document.addEventListener('focusin', function (e) {
+                if (e.target.matches('input')) {
+                    window.scrollTo(0, 0);
+                }
+            });
+        });
+    </script>
 
 </body>
+
 </html>
