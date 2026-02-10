@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management - ConstructPro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Contact CSS -->
+    <link rel="stylesheet" href="contact.css">
+    <style>
+        /* Custom scrollbar for sidebar (same as banner) */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: #1a1030;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: #412B6B;
+            border-radius: 2px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: #5a3b8a;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Admin Panel Container -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <img src="../logo.png" alt="KunashMedia Logo" class="sidebar-logo-img">
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <!-- <a href="../index.html" class="sidebar-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a> -->
+
+                <a href="../Banner Management/banner.html" class="sidebar-item">
+                    <i class="fas fa-images"></i>
+                    <span>Banner Management</span>
+                </a>
+
+                <a href="../Career Management/career.html" class="sidebar-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Career Management</span>
+                </a>
+
+                <a href="../Project Management/project.html" class="sidebar-item">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Project Management</span>
+                </a>
+
+                <a href="contact.html" class="sidebar-item active">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Management</span>
+                </a>
+
+                <!-- Divider after Contact Management -->
+                <div class="sidebar-divider"></div>
+
+                <!-- Logout -->
+                <a href="../Auth/login.html" class="sidebar-item logout-item" onclick="showLogoutConfirm()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+
+                <!-- Toggle Button inside sidebar -->
+                <div class="sidebar-toggle-container">
+                    <button class="sidebar-toggle">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Logout Confirmation Modal-->
+        <div class="modal-overlay" id="logoutModal">
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="modal-title">
+                            <h3>Logout</h3>
+                            <p>Are you sure you want to logout?</p>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-secondary" onclick="closeLogoutModal()">Cancel</button>
+                        <button class="btn-danger" onclick="performLogout()">Yes, Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <h1 class="page-title" id="pageTitle">Contact Management</h1>
+                    <p class="page-subtitle">Manage incoming enquiries & leads</p>
+                </div>
+
+                <div class="header-right">
+                    <button class="header-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <div class="profile">
+                        <div class="profile-info">
+                            <p class="profile-name">Admin User</p>
+                            <p class="profile-role">Administrator</p>
+                        </div>
+                        <div class="profile-avatar"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contact Content Area -->
+            <div class="content-area" id="contentArea">
+                <!-- Content loads dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="modal-title">
+                        <h3>Delete Enquiry</h3>
+                        <p>Are you sure? This action cannot be undone.</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="uiManager.closeModal()">Cancel</button>
+                    <button class="btn-danger" onclick="uiManager.confirmDelete()">Delete Enquiry</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Contact JS -->
+    <script src="contact.js"></script>
+</body>
+
+</html>

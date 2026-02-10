@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Input focus ring - purple theme */
+input:focus {
+  @apply ring-2 ring-purple-600 border-purple-600;
+}
+
+/* Password toggle button hover */
+.toggle-password:hover {
+  @apply text-gray-700;
+}
+
+/* Form validation states */
+input:invalid:not(:placeholder-shown):not(:focus) {
+  @apply border-red-500;
+}
+
+input:invalid:not(:placeholder-shown):not(:focus) ~ .toggle-password {
+  @apply text-red-500;
+}
+
+/* Success / error messages (will be added by JS) */
+.form-message {
+  @apply text-sm mt-1.5 block;
+}
+
+.form-message.success { @apply text-green-600; }
+.form-message.error   { @apply text-red-600; }
